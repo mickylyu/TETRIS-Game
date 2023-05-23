@@ -1,6 +1,4 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener; //to get the input from the keyboard to do something (output action within the game)
 import java.util.ArrayList;
@@ -199,17 +197,25 @@ public class Tetris extends JPanel {
     }
 
     // drawing the puzzle out by the corresponding coordinates provided
-    private void createPuzzle(Graphics g) {
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
         g.setColor(Colors[current]);
         for (Point p : Shapes[current][rotation]) {
             g.fillRect((p.x + origin.x) * 26,
                     (p.y + origin.y) * 26,
                     25, 25);
         }
+
+    }
+
+    public void gameOver(){
+
     }
     @Override
     public void paintComponent(Graphics g)
     {
+        super.paintComponent(g);
         // this is for filling in the color for the background
         g.fillRect(0, 0, 26*12, 26*23);
         for (int i = 0; i < 12; i++) {
@@ -222,7 +228,6 @@ public class Tetris extends JPanel {
         g.setColor(Color.WHITE);
         g.drawString("" + score, 19*12, 25);
         // this is for creating the puzzle that's dropping at the moment
-        createPuzzle(g);
     }
 
     // the main function here would keep looping the game infinitely until game over
@@ -230,12 +235,17 @@ public class Tetris extends JPanel {
         JFrame f = new JFrame("Tetris");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // this ensures that the window is closed completely
-        f.setSize(12*26+10, 26*23+25);
-        f.setVisible(true);
+        f.setPreferredSize(new Dimension(12*26+10, 26*23+25));
         // this ensures that the window created pops out for the visuals to be displayed for the players
-        final Tetris game = new Tetris(); // like any other programs in the main they have to call the class
+        Tetris game = new Tetris(); // like any other programs in the main they have to call the class
         game.init();
         f.add(game);
+        f.setResizable(false);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.pack();
+        f.setLocationRelativeTo(null);
+        f.setVisible(true);
+
 
         // Keyboard controls
         f.addKeyListener(new KeyListener() {
@@ -269,11 +279,14 @@ public class Tetris extends JPanel {
             @Override public void run() {
                 while (true) {
                     try {
+
                         Thread.sleep(1000);
                         game.drop();
+
                     } catch ( InterruptedException e ) {}
                 }
             }
         }.start();
+
     }
 }
